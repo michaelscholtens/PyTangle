@@ -31,24 +31,47 @@ class CrowdTangle:
         
         result = []
         innerParams = {}
-
+        
+        if count > 10000: 
+                    print('Posts returned limited to 10000 with a sortBy parameter of' + postsParams['sortBy'] +". If you would like to return more than 10000 posts, sortBy 'date'")
+                    postsParams['count'] = 10000
+                    
         data = rq.get('https://api.crowdtangle.com/posts', params = postsParams).json()
         
         if data['status'] != 200: 
                 print(data['message'])
+                
         result = data
         
         if count > 100:
+            print('sleep1')
             time.sleep(11)
-
-        while data['result']['pagination'] and len(result['result']['posts']) < count: 
+            
+        if(postsParams['sortBy'] == 'date'):
+        
+            while 'nextPage' in data['result']['pagination'] and len(result['result']['posts']) < count: 
 
                 innerParams = postsParams
                 innerParams['endDate'] = str(datetime.strptime(data['result']['posts'][99]['date'], '%Y-%m-%d %H:%M:%S') + timedelta(seconds = -1))
                 data = rq.get('https://api.crowdtangle.com/posts', innerParams).json()
+                
                 if data['status'] != 200: 
                     print(data['message'])
+                    
                 result['result']['posts'] = result['result']['posts'] + data['result']['posts']
+                time.sleep(11)
+
+        if(postsParams['sortBy'] != 'date'):
+        
+            while 'nextPage' in data['result']['pagination'] and len(result['result']['posts']) < 10000: 
+
+                data = rq.get(data['result']['pagination']['nextPage']).json()
+                
+                if data['status'] != 200: 
+                    print(data['message'])
+                    
+                result['result']['posts'] = result['result']['posts'] + data['result']['posts']
+                print('sleep2')
                 time.sleep(11)
     
         df = pd.DataFrame(result['result']['posts'])
@@ -98,7 +121,7 @@ class CrowdTangle:
         if ctId == True:
             
             postParams = {
-            'token': 'szLzo70Wce3nglKhkv09heg1vZN82lz6VfYijd0C',
+            'token': self.token,
             'includeHistory': '',
             'account': ''
             }
@@ -121,12 +144,17 @@ class CrowdTangle:
             
         return result
         
-    def getLinks(self, link = '', count = 100, types = '', startDate = '', endDate = '', sortBy = 'overperforming', includeHistory = '', includeSummary = '', platforms = '', searchField = '', offset = 0):
+    def getLinks(self, link = '', count = 100, startDate = '', endDate = '', sortBy = 'total_interactions', includeHistory = '', includeSummary = '', platforms = '', searchField = '', offset = 0):
+        
+        if count > 1000:
+            apiCount = 1000
+        else: 
+            apiCount = count
         
         linksParams = {
             'token':self.token,
             'link': link,
-            'count': count,
+            'count': apiCount,
             'startDate': startDate,
             'endDate': endDate,
             'sortBy': sortBy,
@@ -139,25 +167,32 @@ class CrowdTangle:
         
         result = []
         innerParams = {}
-        runningOffset = linkParams['offset']
-
+        
+        if count > 1000 and linksParams['sortBy'] != 'date': 
+                    print("Posts returned limited to 1000 with a sortBy parameter of '" + linksParams['sortBy'] +"'. If you would like to return more than 1000 posts, sortBy 'date'")
+                    linksParams['count'] = 1000
+                    
         data = rq.get('https://api.crowdtangle.com/links', params = linksParams).json()
+        
+        if data['status'] != 200: 
+            print(data['message'])
+            
         result = data
         
-        if count > 500:
-            time.sleep(11)
+        if count > 1000:
+            time.sleep(31)
+        
+        if(linksParams['sortBy'] == 'date'):
+        
+            while 'nextPage' in data['result']['pagination'] and len(result['result']['posts']) < count: 
 
-        while data['result']['pagination'] and len(result['result']['posts']) < count: 
-
-#                 innerParams = postParams
-#                 innerParams['endDate'] = str(datetime.strptime(data['result']['posts'][99]['date'], '%Y-%m-%d %H:%M:%S') + timedelta(seconds = -1))
-            data = rq.get(data['result']['pagination']).json()
-            result['result']['posts'] = result['result']['posts'] + data['result']['posts']
-            time.sleep(11)
-            runningOffset += 100
-            if runningOffset % 1000 == 0:
-                linkParams['offset'] = runningOffset
-                data = rq.get('https://api.crowdtangle.com/links', params = linkParams).json()
+                innerParams = linksParams
+                innerParams['endDate'] = str(datetime.strptime(data['result']['posts'][99]['date'], '%Y-%m-%d %H:%M:%S') + timedelta(seconds = -1))
+                data = rq.get('https://api.crowdtangle.com/links', innerParams).json()
+                if data['status'] != 200: 
+                    print(data['message'])
+                result['result']['posts'] = result['result']['posts'] + data['result']['posts']
+                time.sleep(31)
     
         df = pd.DataFrame(result['result']['posts'])
         df.set_index('platformId')
