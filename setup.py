@@ -7,5 +7,5 @@ setup(name='PyTangle',
       author_email = 'author.mscholtens@gmail.com',
       download_url = 'https://github.com/michaelscholtens/PyTangle',
       description = 'Python wrapper for the Crowdtangle API that returns results as pandas dataframes.',
-      install_requires = ['pandas', 'numpy', 'requests', 'time', 'logging', 'collections', 'datetime']
+      install_requires = ['pandas', 'numpy', 'requests', 'logging', 'collections', 'datetime']
       )
