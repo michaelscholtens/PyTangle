@@ -8,9 +8,9 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 
 #This class is used to interact with the Crowdtangle API.
-class PyTangle:
+class Tangle:
     
-    #When initiating a PyTangle object, you must set the token from the appropriate dashboard. This is particularily important for getPosts, getists, and getLeaderboard functions.
+    #When initiating a Tangle object, you must set the token from the appropriate dashboard. This is particularily important for getPosts, getists, and getLeaderboard functions.
     def __init__(self, token):
         self.token = token
         self.log = logging.getLogger(__name__)
