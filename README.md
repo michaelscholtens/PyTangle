@@ -3,7 +3,7 @@
 ![py_ct_logo](https://user-images.githubusercontent.com/48947001/116953965-9fa08d00-ac5c-11eb-9c12-ba82c72ccc8d.png)
 
 
-Python Wrapper for the Crowdtangle API that returns the results as a pandas dataframe. While this package will eventually be published to PyPl, this repository is public and the package can be installed using the code in the block below. 
+Python wrapper for the Crowdtangle API that returns the results as a pandas dataframe. While this package will eventually be published to PyPl, this repository is public and the package can be installed using the code in the block below. 
 
 ## Installing PyTangle
 
