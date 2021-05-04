@@ -317,9 +317,9 @@ class PyTangle:
         return result
     
     #This function takes a list of links and exports a file in the format for bulk upload to Crowdtangle.
-    def crowdtangleExport(self, links, listName = 'tangle', filePath = ''):
+    def crowdtangleExport(self, links, groupListName = 'tangle_groups', pageListName = 'tangle_pages', filePath = ''):
         df = pd.DataFrame(links, columns=['Page or Account URL'])
-        df["List"] = [listName + "_groups" if "group" in row else listName + "_pages" for row in df['Page or Account URL']]
+        df["List"] = [groupListName if "group" in row else pageListName for row in df['Page or Account URL']]
         if filePath:
             df.to_csv(filePath + 'CtExport' + time.strftime("%d_%h_%y_%H_%M", time.localtime()) + '.csv', index = False)
         else:
