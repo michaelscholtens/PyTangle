@@ -8,9 +8,9 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 
 #This class is used to interact with the Crowdtangle API.
-class Tangle:
+class PyTangle:
     
-    #When initiating a Tangle object, you must set the token from the appropriate dashboard. This is particularily important for getPosts, getists, and getLeaderboard functions.
+    #When initiating a PyTangle object, you must set the token from the appropriate dashboard. This is particularily important for getPosts, getists, and getLeaderboard functions.
     def __init__(self, token):
         self.token = token
         self.log = logging.getLogger(__name__)
@@ -73,9 +73,9 @@ class Tangle:
                 #Parameters are passed from the first call to the second. 
                 
                 innerParams = postsParams
-                
+                innerParams['count'] = count - len(result['result']['posts'])
+
                 #The 'endDate' parameter is adjusted to collect the next 100 posts.
-                
                 innerParams['endDate'] = str(datetime.strptime(data['result']['posts'][99]['date'], '%Y-%m-%d %H:%M:%S') + timedelta(seconds = -1))
                 data = rq.get('https://api.crowdtangle.com/posts', innerParams).json()
                 
@@ -110,7 +110,7 @@ class Tangle:
         if len(df) != 0:
             df.set_index('platformId')
         
-        #These lines a not intuitive at all but unpacks columns that store dictionaries into new columns. There may be more intuitive ways to do this and this section is a priority for refactoring.
+        #These lines are not intuitive at all but unpacks columns that store dictionaries into new columns. There may be more intuitive ways to do this and this section is a priority for refactoring.
             expandedLinks = pd.DataFrame(pd.DataFrame([x if type(x) != np.float else [np.nan,np.nan] for x in list(df['expandedLinks'])])[0].to_dict()).transpose()
             statisticsActual = pd.DataFrame(pd.DataFrame([x if type(x) != np.float else np.nan for x in list(df['statistics'])])['actual'].apply(pd.Series))
             statisticsExpected = pd.DataFrame(pd.DataFrame([x if type(x) != np.float else np.nan for x in list(df['statistics'])])['expected'].apply(pd.Series))
@@ -156,7 +156,7 @@ class Tangle:
 
             df.set_index('platformId')
 
-            #These lines a not intuitive at all but unpack columns that store dictionaries into new columns. There may be more intuitive ways to do this and this section is a priority for refactoring.
+            #These lines are not intuitive at all but unpack columns that store dictionaries into new columns. There may be more intuitive ways to do this and this section is a priority for refactoring.
             expandedLinks = pd.DataFrame(pd.DataFrame([x if type(x) != np.float else [np.nan,np.nan] for x in list(df['expandedLinks'])])[0].to_dict()).transpose()
             statisticsActual = pd.DataFrame(pd.DataFrame([x if type(x) != np.float else np.nan for x in list(df['statistics'])])['actual'].apply(pd.Series))
             statisticsExpected = pd.DataFrame(pd.DataFrame([x if type(x) != np.float else np.nan for x in list(df['statistics'])])['expected'].apply(pd.Series))
@@ -224,6 +224,7 @@ class Tangle:
             while 'nextPage' in data['result']['pagination'] and len(result['result']['posts']) < count: 
 
                 innerParams = linksParams
+                innerParams['count'] = count - len(result['result']['posts'])
                 innerParams['endDate'] = str(datetime.strptime(data['result']['posts'][99]['date'], '%Y-%m-%d %H:%M:%S') + timedelta(seconds = -1))
                 data = rq.get('https://api.crowdtangle.com/links', innerParams).json()
                 
