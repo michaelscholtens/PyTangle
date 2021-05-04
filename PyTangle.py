@@ -73,7 +73,8 @@ class PyTangle:
                 #Parameters are passed from the first call to the second. 
                 
                 innerParams = postsParams
-                innerParams['count'] = count - len(result['result']['posts'])
+                if (count - len(result['result']['posts'])) < 100:
+                    innerParams['count'] = count - len(result['result']['posts'])
 
                 #The 'endDate' parameter is adjusted to collect the next 100 posts.
                 innerParams['endDate'] = str(datetime.strptime(data['result']['posts'][99]['date'], '%Y-%m-%d %H:%M:%S') + timedelta(seconds = -1))
@@ -224,7 +225,8 @@ class PyTangle:
             while 'nextPage' in data['result']['pagination'] and len(result['result']['posts']) < count: 
 
                 innerParams = linksParams
-                innerParams['count'] = count - len(result['result']['posts'])
+                if (count - len(result['result']['posts'])) < 1000:
+                    innerParams['count'] = count - len(result['result']['posts'])
                 innerParams['endDate'] = str(datetime.strptime(data['result']['posts'][99]['date'], '%Y-%m-%d %H:%M:%S') + timedelta(seconds = -1))
                 data = rq.get('https://api.crowdtangle.com/links', innerParams).json()
                 
