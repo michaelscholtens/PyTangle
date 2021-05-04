@@ -80,7 +80,7 @@ The function accepts the following arguments:
 | includeHistory | str | Includes timestep data for growth of each post returned. | 'False' |
 | language | str | [Two letter locale code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) | null |
 | minInteractions | int | Exclude posts with total interactions below this threshold. | 0 | 
-| pageAdminTopCountry | [Two letter locale code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) | null | 
+| pageAdminTopCountry | str |  [Two letter locale code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) | null | 
 | verified | str | Limits to posts where the account has the verified setting matching the input. Options include: only, exclude, no_filter. | 'no_filter' |
 | brandedContent | str | Limits to or excludes posts that have been marked as Branded Content, either as Publisher or Marketer. Options include: as_publisher, as_marketer, exclude, no_filter | no_filter | 
 | offset | int | The number of posts to offset | 0 |
@@ -133,8 +133,8 @@ The function accepts the following arguments:
 | Argument      | Datatype      | Description  | Default Value |
 | :------------- |:-------------| :-----|:---|
 | links      | list of strs | The links must be in the form of a list of strings, with each string being a url for a Facebook group or page. | Required |
-| groupListName | This is the name of the Crowdtangle list to which you would like to upload all Facebook groups in the links list. | 'tangle_groups' |
-| pageListName | This is the name of the Crowdtangle list to which you would like to upload all Facebook pages in the links list. | 'tangle_pages' |
+| groupListName | str | This is the name of the Crowdtangle list to which you would like to upload all Facebook groups in the links list. | 'tangle_groups' |
+| pageListName | str | This is the name of the Crowdtangle list to which you would like to upload all Facebook pages in the links list. | 'tangle_pages' |
 | filePath | str | This is the location to which you would like to write the csv file that is ready for batch upload. | null (current directory) | 
 
 ```
