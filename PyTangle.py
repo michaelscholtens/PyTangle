@@ -330,7 +330,7 @@ class PyTangle:
         return df
     
     #This function makes it easier to pull posts for a CT list at date intervals over a span of time.
-    def durationPull(self, listIds = '', count = 1000, startDate = '', endDate = '', hours = 0, days = 0, months = 0, years = 0, sortBy = 'date', printProgress = False,): 
+    def durationPull(self, listIds = '', count = 1000, startDate = '', endDate = '', hours = 0, days = 0, months = 0, years = 0, sortBy = 'date', printProgress = False): 
 
         #Start time set for API calls.
         start = datetime.strptime(startDate, '%Y-%m-%d')
