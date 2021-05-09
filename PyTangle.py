@@ -6,6 +6,7 @@ import time
 import logging
 from collections import defaultdict
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 #This class is used to interact with the Crowdtangle API.
 class PyTangle:
@@ -327,3 +328,44 @@ class PyTangle:
         else:
             df.to_csv('CtExport' + time.strftime("%d_%h_%y_%H_%M", time.localtime()) + '.csv', index = False)
         return df
+    
+    #This function makes it easier to pull posts for a CT list at date intervals over a span of time.
+    def durationPull(self, listIds = '', count = 1000, startDate = '', endDate = '', hours = 0, days = 0, months = 0, years = 0, sortBy = 'date', printProgress = False,) 
+
+        #Start time set for API calls.
+        start = datetime.strptime(startDate, '%Y-%m-%d')
+        #End time set for API calls.
+        end = datetime.strptime(endDate, '%Y-%m-%d')
+
+        results = pd.DataFrame()
+
+        #While loop that increments by the given intervals from the function parameters. 
+        while start < end:
+
+            #API call requires str type for date parameter.
+            startStr = start.strftime('%Y-%m-%d')
+            
+            #A temporary end date is set for the current API call by adding the given interval to the start date.
+            tempEnd = start + relativedelta(hour = hours, days = days, months = months, years = years)
+            
+            endStr = tempEnd.strftime('%Y-%m-%d')
+            
+            #This function can run for a log time so this block will print updates on which interval is currently in progress.
+            if printProgress == True:
+                print()
+                print(startStr)
+                print(endStr)
+            
+            #API call.
+            temp = self.getPosts(listIds = listIds, count = count, startDate = startStr, endDate = endStr, sortBy = sortBy)
+
+            #The JSON returns have duplicated returns that can cause problems in pandas. This line removes duplicate columns. 
+            temp = temp.loc[:,~temp.columns.duplicated()]
+
+            #results are appended with each loop. 
+            results = pd.concat([results, temp], axis = 0, ignore_index = True)
+            
+            #The temporary end becomes the new start date for the next interation. 
+            start = tempEnd
+
+        return results
